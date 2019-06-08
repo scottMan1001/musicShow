@@ -19,6 +19,10 @@ var ac = new (window.AudioContext || window.webkitAudioContext) ();
 var gainNode = ac[ac.createGain?"createGain":"createGainNode"]();
 gainNode.connect(ac.destination);
 var source = null;
+
+var analyser = ac.createAnalyser();
+analyser.fftSize = 512;
+analyser.connect(gainNode);
 var count = 0;
 function load(url) {
     var n = ++ count;
@@ -33,14 +37,22 @@ function load(url) {
                 if (n!= count) return;
                 var bufferSource = ac.createBufferSource();
                 bufferSource.buffer = buffer;
-                bufferSource.connect(gainNode);
+                // bufferSource.connect(gainNode);
+                bufferSource.connect(analyser);
                 bufferSource[bufferSource.start? "start":"noteOn"](0);
                 source = bufferSource;
+                visualizer();
         },function (err){
             console.log(err)
         })
     }
     xhr.send();
+}
+
+function visualizer() {
+    var arr = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(arr);
+    console.log(arr)
 }
 
 function changeVolume (percent) {
