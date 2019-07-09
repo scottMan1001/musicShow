@@ -7,3 +7,5 @@ give me power ,make me strong!
 记录相关：$ ssh-add ~/.ssh/id_rsa
 
 $ ssh-agent bash
+
+2019/7/9
